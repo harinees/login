@@ -1,0 +1,144 @@
+index.js
+
+**************************************
+import React from 'react';
+import ReactDom from 'react-dom';
+import App  from './components/App';
+import Loginn from './components/Loginn';
+import Dashboard from './components/Dashboard';
+import history from './components/history';
+import { Router } from 'react-router-dom';
+import { Route} from 'react-router';
+
+ReactDom.render(<Router history={history}>
+     <Route  path="/dashboard" component={Dashboard} />
+     <Route exact   path="/loginn" component={Loginn} />
+    <App /></Router>, document.querySelector('#root'));
+
+
+********************************************
+
+app.js
+
+import React from 'react';
+import Login from './Login'
+const App = () => {
+    return(
+        <div>
+          <Login />
+        </div>
+    )
+}
+
+export default App;
+
+**********************************************
+
+dashboard.js
+
+import React from 'react';
+/* 
+import { Link } from 'react-router-dom';
+*/
+const Dashboard = () => {
+    return    (
+        <div>
+            Dashboard !!!! 
+            
+        </div>
+    )
+}
+
+export default Dashboard;
+
+
+**************************************************
+login .js
+
+
+import React from 'react';
+import axios from 'axios';
+import {Redirect } from 'react-router-dom';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+/*import history from './history'; */
+
+class Login extends React.Component {
+constructor(props){
+  super(props);
+  this.state={
+  username:'',
+  password:'',
+  redirectToReferrer: false 
+
+  }
+  }
+ handleClick(event){
+    var apiBaseUrl = "https://reqres.in/api/login";
+     
+    var payload={
+    "email":this.state.username,
+    "password":this.state.password
+    }
+    axios.post(apiBaseUrl, payload)
+    .then(function (response) {
+    console.log(response.status);
+    if(response.status === 200){
+      console.log("Login successfull");
+      
+      this.setState({
+        redirectToReferrer: true 
+      })
+     }
+    }.bind(this))
+    .catch(function (error) {
+      alert("wrong password/username ");
+    console.log(error);
+    });
+    }
+
+render() {
+  
+  const {redirectToReferer}  = this.state;
+  console.log(redirectToReferer);
+  if(this.state.redirectToReferrer === true) {
+    return(
+      <Redirect to="/dashboard" /> 
+    )
+  }
+
+    return (
+      <div>
+         
+        <MuiThemeProvider>
+          <div>
+          <AppBar
+             title="Login"
+           />
+           <TextField
+             hintText="Enter your Username"
+             floatingLabelText="Username"
+             onChange = {(event,newValue) => this.setState({username:newValue})}
+             />
+           <br/>
+             <TextField
+               type="password"
+               hintText="Enter your Password"
+               floatingLabelText="Password"
+               onChange = {(event,newValue) => this.setState({password:newValue})}
+               />
+             <br/>
+             <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.handleClick(event)}/>
+         </div>
+         </MuiThemeProvider>
+      </div>
+    );
+  }
+}
+const style = {
+ margin: 15,
+};
+ 
+export default Login;
